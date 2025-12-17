@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Artistes</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script defer src="/static/js/artists.js"></script> <!-- corrigé ici -->
+</head>
+<body>
+
+<header class="top-header">
+  <h1>🎤 Artistes</h1>
+  <nav class="nav-menu">
+    <a href="/" class="nav-link">Accueil</a>
+    <a href="/artists" class="nav-link active">Artistes</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h2>Artistes du moment</h2>
+  <p>Découvrez les artistes populaires via l’API Groupie Tracker</p>
+</section>
+
+<section class="artists-section">
+  <div id="artists-list" class="artists-grid"></div>
+</section>
+
+<!-- Zone affichage erreur si besoin -->
+<p id="error-message" style="color: #ff5555; text-align:center; margin-top: 2rem;"></p>
+
+</body>
+</html>

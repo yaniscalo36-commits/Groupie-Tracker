@@ -5,16 +5,15 @@ import (
 	"net/http"
 )
 
-// Artist structure
 type Artist struct {
-	ID      int      `json:"id"`
-	Name    string   `json:"name"`
-	Image   string   `json:"image"`
-	Members []string `json:"members"`
-	Genre   string   `json:"genre"`
+	ID           int      `json:"id"`
+	Name         string   `json:"name"`
+	Image        string   `json:"image"`
+	Members      []string `json:"members"`
+	CreationDate int      `json:"creationDate"`
+	FirstAlbum   string   `json:"firstAlbum"`
 }
 
-// LoadArtistsFromAPI récupère les artistes depuis une API externe
 func LoadArtistsFromAPI(url string) ([]Artist, error) {
 	resp, err := http.Get(url)
 	if err != nil {
