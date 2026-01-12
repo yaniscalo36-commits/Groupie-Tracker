@@ -12,10 +12,18 @@ type Artist struct {
 	Members      []string `json:"members"`
 	CreationDate int      `json:"creationDate"`
 	FirstAlbum   string   `json:"firstAlbum"`
+	Locations    string   `json:"locations"`
+	Dates        string   `json:"concertDates"`
+	Relations    string   `json:"relations"`
 }
 
-func LoadArtistsFromAPI(url string) ([]Artist, error) {
-	resp, err := http.Get(url)
+type Relation struct {
+	ID             int                 `json:"id"`
+	DatesLocations map[string][]string `json:"datesLocations"`
+}
+
+func LoadArtists() ([]Artist, error) {
+	resp, err := http.Get("https://groupietrackers.herokuapp.com/api/artists")
 	if err != nil {
 		return nil, err
 	}
@@ -28,4 +36,28 @@ func LoadArtistsFromAPI(url string) ([]Artist, error) {
 	}
 
 	return artists, nil
+}
+
+func LoadRelations() (map[int]Relation, error) {
+	resp, err := http.Get("https://groupietrackers.herokuapp.com/api/relation")
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var raw struct {
+		Index []Relation `json:"index"`
+	}
+
+	err = json.NewDecoder(resp.Body).Decode(&raw)
+	if err != nil {
+		return nil, err
+	}
+
+	relations := make(map[int]Relation)
+	for _, r := range raw.Index {
+		relations[r.ID] = r
+	}
+
+	return relations, nil
 }

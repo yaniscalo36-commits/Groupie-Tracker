@@ -1,7 +1,7 @@
 package main
 
 import (
-	"encoding/json"
+	"html/template"
 	"log"
 	"net/http"
 
@@ -10,35 +10,26 @@ import (
 
 func main() {
 
-	// Static files CSS/JS
-	fs := http.FileServer(http.Dir("./static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
+	// Fichiers statiques
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	http.Handle("/image/", http.StripPrefix("/image/", http.FileServer(http.Dir("image"))))
 
-	// Static images (si tu mets des images locales dans ./image)
-	imageFs := http.FileServer(http.Dir("./image"))
-	http.Handle("/image/", http.StripPrefix("/image/", imageFs))
-
-	// Pages HTML
+	// Page accueil
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./templates/index.html")
+		tmpl := template.Must(template.ParseFiles("templates/index.html"))
+		tmpl.Execute(w, nil)
 	})
 
+	// Page artistes
 	http.HandleFunc("/artists", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./templates/artists.html")
-	})
-
-	// API locale qui fait proxy vers l’API distante
-	http.HandleFunc("/api/artists", func(w http.ResponseWriter, r *http.Request) {
-		artists, err := api.LoadArtistsFromAPI(
-			"https://groupietrackers.herokuapp.com/api/artists",
-		)
+		artists, err := api.LoadArtists()
 		if err != nil {
-			http.Error(w, "Erreur API", http.StatusInternalServerError)
+			http.Error(w, "Erreur chargement artistes", http.StatusInternalServerError)
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(artists)
+		tmpl := template.Must(template.ParseFiles("templates/artists.html"))
+		tmpl.Execute(w, artists)
 	})
 
 	log.Println("Serveur lancé sur http://localhost:8080")
